@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  nginx:
+    build: 
+      context: ./
+      dockerfile: ./docker/nginx/Dockerfile
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./src:/var/www/src
+    depends_on:
+      - php82
+    networks:
+      - docker.network
+
+  php82:
+    build:
+      context: ./
+      dockerfile: ./docker/php82/Dockerfile
+    container_name: php82
+    volumes:
+      - ./src:/var/www/src
+    depends_on:
+      - mariadb
+    networks:
+      - docker.network
+
+  mariadb:
+    image: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+    - './docker/mariadb/conf/mariadb.cnf:/etc/mysql/conf.d/custom.cnf:ro'
+    - './docker/mariadb/data:/var/lib/mysql'
+    networks:
+      - docker.network
+
+networks:
+  networks:
+  docker.network:
+    driver: bridge

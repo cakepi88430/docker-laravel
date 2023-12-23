@@ -22,10 +22,5 @@ Route::group([
     'prefix' => 'line'
 ], function () {
     Route::post('bot/callback', 'Line\BotController@callback'); 
-});
-
-
-Route::get('/test', function (Request $request) {
-    $client = new \GuzzleHttp\Client();
-    dd($client);
+    Route::post('notify/message', 'Line\NotifyController@sendMessage'); 
 });
